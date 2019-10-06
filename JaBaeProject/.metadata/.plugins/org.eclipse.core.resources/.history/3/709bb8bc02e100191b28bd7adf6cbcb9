@@ -1,0 +1,197 @@
+package JaBae.Login.Main.etc;
+
+import static javax.swing.JOptionPane.showMessageDialog;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import org.omg.CORBA.INITIALIZE;
+
+import JaBae.Admin.test;
+import JaBae.Customer.DAO.MemberDAO;
+import JaBae.Customer.DAO.MemberVO;
+import JaBae.Customer.Main.Cus_selectView;
+
+import javax.swing.JLabel;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.SQLException;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+
+public class LoginCustomer extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField tfId;// 입력한 아이디 텍스트필드
+	private JPasswordField tfPwd;// 비밀번호값
+	private String toss;// 입력한 아이디
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoginCustomer frame = new LoginCustomer();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public LoginCustomer() {
+
+		setTitle("로그인");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 437, 477);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel panelLogo = new JPanel();
+		panelLogo.setBorder(new EmptyBorder(60, 0, 0, 0));
+		contentPane.add(panelLogo, BorderLayout.NORTH);
+		panelLogo.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+		JLabel lblNewLabel = new JLabel("자바 택배");
+		lblNewLabel.setFont(new Font("굴림", Font.PLAIN, 56));
+		panelLogo.add(lblNewLabel);
+
+		JPanel panelBtn = new JPanel();
+		panelBtn.setBorder(new EmptyBorder(0, 0, 60, 0));
+		contentPane.add(panelBtn, BorderLayout.SOUTH);
+		panelBtn.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 5));
+
+		JButton btnFindInfo = new JButton("아이디/비밀번호 찾기");
+		btnFindInfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				FindInfoView FIV = new FindInfoView();
+				FIV.setVisible(true);
+
+			}
+		});
+		panelBtn.add(btnFindInfo);
+
+		JButton btnSignUp = new JButton("회원가입");
+		btnSignUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Cus_JoinView cus_join = new Cus_JoinView();
+				cus_join.setVisible(true);
+
+			}
+		});
+		panelBtn.add(btnSignUp);
+
+		JPanel panelLogin = new JPanel();
+		panelLogin.setBorder(new EmptyBorder(50, 90, 20, 90));
+		contentPane.add(panelLogin, BorderLayout.CENTER);
+		panelLogin.setLayout(new BorderLayout(0, 0));
+
+		JPanel panelLoginInput = new JPanel();
+		panelLogin.add(panelLoginInput);
+		panelLoginInput.setLayout(new GridLayout(0, 2, -60, 20));
+
+		JLabel lblId = new JLabel("아이디");
+		lblId.setFont(new Font("굴림", Font.PLAIN, 17));
+		panelLoginInput.add(lblId);
+
+		tfId = new JTextField();
+		panelLoginInput.add(tfId);
+		tfId.setColumns(20);
+
+		JLabel lblPwd = new JLabel("비밀번호");
+		lblPwd.setFont(new Font("굴림", Font.PLAIN, 17));
+		panelLoginInput.add(lblPwd);
+
+		tfPwd = new JPasswordField();
+		panelLoginInput.add(tfPwd);
+
+		JPanel panelLoginBtn = new JPanel();
+		panelLoginBtn.setBorder(new EmptyBorder(20, 0, 0, 0));
+		panelLogin.add(panelLoginBtn, BorderLayout.SOUTH);
+		panelLoginBtn.setLayout(new GridLayout(0, 1, 0, 0));
+
+		
+		tfId.setText("admin");
+		tfPwd.setText("1234");
+		JButton btnLogin = new JButton("로그인");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String id = tfId.getText().trim();
+				String pwd = tfPwd.getText().trim();
+				MemberDAO mdao = new MemberDAO();
+
+				// 관리자 로그인
+				if (id.equals("admin")) {
+					boolean checkAdmin = mdao.loginAdmin(id, pwd);
+					if (checkAdmin == true) {
+						test test1 = new test();
+						test1.setVisible(true);
+						dispose();
+
+					} else {
+						System.out.println("관리자 로그인 실패");
+					}
+				}
+
+				
+				if(!id.equals("admin")) {
+				// 사용자 로그인
+					boolean check = mdao.loginCheck(id, pwd);
+					if (check == true) {
+						toss = tfId.getText();
+						Cus_selectView sv2 = new Cus_selectView(toss);
+						sv2.setVisible(true);
+						dispose();
+
+					} else {
+						System.out.println("사용자");
+					}
+
+				}
+
+			}
+		});
+
+		panelLoginBtn.add(btnLogin);
+
+		setLocationRelativeTo(null);
+		this.addWindowListener(new JFrameWindowClosingEventHandler());
+
+	}
+
+	class JFrameWindowClosingEventHandler extends WindowAdapter {
+		public void windowClosing(WindowEvent e) {
+			JFrame frame = (JFrame) e.getWindow();
+			frame.dispose();
+			System.out.println("windowClosing()");
+		}
+	}
+
+	// 아이디 값 넘길때 사용하는 메서드
+	public String check() {
+		System.out.println(toss);
+		return toss;
+	}
+}

@@ -1,0 +1,122 @@
+package JaBae.Login.Main;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import JaBae.Seller.Seller_Main;
+
+import javax.swing.JLabel;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class LoginSeller extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField tfId;
+	private JTextField tfPwd;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoginSeller frame = new LoginSeller();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public LoginSeller() {
+		setTitle("로그인");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 437, 477);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panelLogo = new JPanel();
+		panelLogo.setBorder(new EmptyBorder(60, 0, 0, 0));
+		contentPane.add(panelLogo, BorderLayout.NORTH);
+		panelLogo.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lblNewLabel = new JLabel("자배 택배");
+		lblNewLabel.setFont(new Font("굴림", Font.PLAIN, 56));
+		panelLogo.add(lblNewLabel);
+		
+		JPanel panelBtn = new JPanel();
+		panelBtn.setBorder(new EmptyBorder(0, 0, 60, 0));
+		contentPane.add(panelBtn, BorderLayout.SOUTH);
+		panelBtn.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 5));
+		
+		JButton btnFindInfo = new JButton("id/pwd찾기");
+		panelBtn.add(btnFindInfo);
+		
+		JButton btnSignUp = new JButton("회원가입");
+		panelBtn.add(btnSignUp);
+		
+		JPanel panelLogin = new JPanel();
+		panelLogin.setBorder(new EmptyBorder(50, 90, 20, 90));
+		contentPane.add(panelLogin, BorderLayout.CENTER);
+		panelLogin.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panelLoginInput = new JPanel();
+		panelLogin.add(panelLoginInput);
+		panelLoginInput.setLayout(new GridLayout(0, 2, -60, 20));
+		
+		JLabel lblId = new JLabel("아이디");
+		lblId.setFont(new Font("굴림", Font.PLAIN, 17));
+		panelLoginInput.add(lblId);
+		
+		tfId = new JTextField();
+		
+		panelLoginInput.add(tfId);
+		tfId.setColumns(20);
+		
+		JLabel lblPwd = new JLabel("비밀번호");
+		lblPwd.setFont(new Font("굴림", Font.PLAIN, 17));
+		panelLoginInput.add(lblPwd);
+		
+		tfPwd = new JTextField();
+		panelLoginInput.add(tfPwd);
+		tfPwd.setColumns(10);
+		
+		JPanel panelLoginBtn = new JPanel();
+		panelLoginBtn.setBorder(new EmptyBorder(20, 0, 0, 0));
+		panelLogin.add(panelLoginBtn, BorderLayout.SOUTH);
+		panelLoginBtn.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JButton btnLogin = new JButton("로그인");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			Seller_Main seller_main =  new Seller_Main();
+			seller_main.setVisible(true);
+			dispose();
+			
+			
+			}
+		});
+		panelLoginBtn.add(btnLogin);
+		setLocationRelativeTo(null);
+	}
+
+}

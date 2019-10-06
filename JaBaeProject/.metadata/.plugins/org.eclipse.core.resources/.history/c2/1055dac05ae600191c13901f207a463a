@@ -1,0 +1,42 @@
+package JaBae.admin.Main;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+import JaBae.admin.DAO.SalesMgtDAO;
+import JaBae.admin.VO.SalesVO;
+
+public class SalesDrawingPanel extends JPanel{
+	
+	int maxFee = 0;
+	
+	public void paint(Graphics g){
+		SalesMgtDAO salesDAO = new SalesMgtDAO();
+		ArrayList<SalesVO> salesList;
+		try {
+			salesList = salesDAO.getDayGragh();
+			for (SalesVO salesVO : salesList) {
+				int getFee = Integer.parseInt(salesVO.getFee());
+				if(getFee > maxFee)
+					maxFee = getFee;
+			}//for end
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		 for(int cnt = 0; cnt<10; cnt++){
+			 g.drawString(maxFee - (9 -cnt)*(maxFee/10) + "", 50, 350-35*cnt);
+			 g.drawLine(100, 350-35*cnt, 800, 350-35*cnt);
+		}
+//		 g.drawLine(50,20,50,250);
+//		 g.drawString("국어",100,500);
+//		 g.drawString("영어",200,500);
+//		 g.drawString("수학",300,500);
+//		 g.setColor(Color.RED);
+	 }
+
+}

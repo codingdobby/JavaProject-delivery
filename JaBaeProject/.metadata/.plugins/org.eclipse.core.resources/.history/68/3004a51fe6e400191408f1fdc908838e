@@ -1,0 +1,144 @@
+package JaBae.Customer.Main;
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import JaBae.Customer.DAO.MemberDAO;
+import JaBae.Customer.DAO.MemberVO;
+import JaBae.Login.Main.etc.LoginCustomer;
+
+import javax.swing.JLabel;
+import java.awt.FlowLayout;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Cus_selectView extends JFrame {
+	JLabel test;
+	private JPanel contentPane;
+	JPanel panel;
+	private static String toss;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Cus_selectView frame = new Cus_selectView(toss);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+
+	public Cus_selectView(String toss) {
+		this.toss = toss;
+
+		setTitle("택배 시스템 프로그램");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 900, 650);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+
+		panel = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setVgap(20);
+		contentPane.add(panel, BorderLayout.NORTH);
+		LoginCustomer test1 = new LoginCustomer();
+		System.out.println(toss);
+
+		JLabel lb_top = new JLabel("택배 관리 시스템(고객용)");
+		lb_top.setFont(new Font("돋움", Font.PLAIN, 30));
+		panel.add(lb_top);
+
+		JPanel panel_1 = new JPanel();
+		contentPane.add(panel_1, BorderLayout.CENTER);
+		panel_1.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new EmptyBorder(100, 30, 100, 50));
+		panel_1.add(panel_2, BorderLayout.CENTER);
+		panel_2.setLayout(new GridLayout(0, 3, 30, 20));
+
+		JButton btnInfo = new JButton("회원 정보 관리");
+		btnInfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				Cus_Info CI = new Cus_Info(toss);
+				CI.setVisible(true);
+
+			}
+		});
+		btnInfo.setFont(new Font("돋움", Font.PLAIN, 20));
+		panel_2.add(btnInfo);
+
+		// 송장 조회
+		JButton btnSong = new JButton("송장 조회");
+		btnSong.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				Delivery_Select ds = new Delivery_Select(toss);
+				ds.setVisible(true);
+				dispose();
+
+			}
+		});
+		btnSong.setFont(new Font("돋움", Font.PLAIN, 20));
+		panel_2.add(btnSong);
+
+		JButton btnOrder = new JButton("주문 내역 조회");
+		btnOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OrderListView olv = new OrderListView(toss);
+				olv.setVisible(true);
+				dispose();
+
+			}
+		});
+		btnOrder.setFont(new Font("돋움", Font.PLAIN, 20));
+		panel_2.add(btnOrder);
+
+		JPanel panel_3 = new JPanel();
+		panel_1.add(panel_3, BorderLayout.NORTH);
+
+		JLabel test_1 = new JLabel();
+		panel_3.add(test_1);
+		test_1.setText(toss);
+
+		JLabel lblNewLabel = new JLabel("고객님 환영합니다!");
+		panel_3.add(lblNewLabel);
+
+		JLabel lblNewLabel_1 = new JLabel("보유 포인트");
+		panel_3.add(lblNewLabel_1);
+
+		// 화면 전환시 바로 포인트 조회
+
+		JLabel lb_point = new JLabel("");
+
+		MemberDAO mdo = new MemberDAO();
+		MemberVO vo = mdo.getPoint(toss);
+
+		String Point = Integer.toString(vo.getPoint());
+
+		lb_point.setText(Point);
+
+		panel_3.add(lb_point);
+		setLocationRelativeTo(null);
+	}
+	/********************************************/
+
+}

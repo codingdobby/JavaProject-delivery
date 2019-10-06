@@ -1,0 +1,207 @@
+package JaBae.Seller;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+public class Seller_ConveyorSelectDAO implements ActionListener {
+
+	private static Connection conn; //id, pwd, ulr
+	private static Statement st; //sql execute
+	private static ResultSet rs; //결과물
+	private static PreparedStatement ps;
+	private static JTable ta_LoL; 
+	private JTextField txt_in1,txt_in2,txt_in3,txt_in4,txt_in5,txt_selid;
+	
+	
+	
+	public Seller_ConveyorSelectDAO(JTable ta_LoL, JTextField txt_in1, JTextField txt_in2, JTextField txt_in3, JTextField txt_in4, JTextField txt_in5) {
+		this.ta_LoL = ta_LoL; // 수정버튼에서 주는 값을 받아서 저장해주는 생성자.
+		this.txt_in1 = txt_in1;
+		this.txt_in2 = txt_in2;
+		this.txt_in3 = txt_in3;
+		this.txt_in4 = txt_in4;
+		this.txt_in5 = txt_in5;
+	}
+	public Seller_ConveyorSelectDAO(JTable ta_LoL,JTextField txt_selid) {
+			this.ta_LoL = ta_LoL; // 조회버튼에서 주는 값을 받아서 저장해주는 생성자.
+			this.txt_selid = txt_selid;
+		}
+	
+	public Seller_ConveyorSelectDAO() {
+		// TODO Auto-generated constructor stub
+	}
+
+//  -----------------------------------------------------------------------------------------------------
+//	------------------------------------------- DB 접속 메소드 ----------------------------------------------
+	static void connectDB() throws SQLException {
+		String url = "jdbc:oracle:thin:@localhost:1521/xe"; //2.url설정
+		String id = "sample";
+		String pwd = "sample";
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");//1.드라이버 로딩
+			System.out.println("jdbc 연결 성공");
+			
+			conn = DriverManager.getConnection(url, id, pwd); //3.db연결 접속 확인
+			System.out.println("oracle연결 성공");
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("jdbc 연결 실패");
+			e.printStackTrace();
+		} catch(SQLException e) {
+			System.out.println("orcale연결 실패");
+		}
+		
+		st = conn.createStatement();
+		
+	}
+//  -----------------------------------------------------------------------------------------------------
+//	------------------------------------------- DB 해제 메소드 ----------------------------------------------
+	void closeDB() throws SQLException {
+		if(rs != null) rs.close();
+		if(ps != null) ps.close();
+		if(st != null) st.close();
+		if(conn!= null) conn.close();
+	}
+//  -----------------------------------------------------------------------------------------------------
+
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("송장 조회")) {
+			try {
+				select();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}else if(e.getActionCommand().equals("수정 적용")) {
+			try {
+				update();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+//  -----------------------------------------------------------------------------------------------------
+//	------------------------------------------- 송장 조회 메소드 ----------------------------------------------
+	
+	private void select() throws SQLException {
+		
+		connectDB();
+		
+		try {
+		String selid = txt_selid.getText().toString().trim(); // txt_selid에 입력된 값을 문자열 selid에 넣음.
+		
+		
+		String arr[] = new String[7];
+        DefaultTableModel model = (DefaultTableModel) ta_LoL.getModel();
+         int rowNum = model.getRowCount();
+         
+         for(int i=0; i<rowNum; i++) {
+        	 model.removeRow(0);
+         }
+         
+         String sql = "select order_no, object_name, name, tel, addr, start_date, end_date from delivery_select "
+         												+ "where SELLER_ID_DS_FK = ? order by 1";
+         ps = conn.prepareStatement(sql); // 입력 받은 id를 where 조건절로 해당하는 열의 값만.  ▲
+         ps.setString(1, selid); // SELLER_ID_DS_FK ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ  1
+         rs = ps.executeQuery();
+         
+         while(rs.next()) { // 만들어둔 arr[]에 넣어서 addrow(추가열) 값은 arr에 들어있는 것들.
+        	 arr[0] = rs.getString("order_no");
+        	 arr[1] = rs.getString("object_name");
+        	 arr[2] = rs.getString("name");
+        	 arr[3] = rs.getString("tel");
+        	 arr[4] = rs.getString("addr");
+        	 arr[5] = rs.getString("start_date");
+        	 arr[6] = rs.getString("end_date");
+        	 model.addRow(arr);
+         }
+		} catch (NullPointerException e) {
+		}
+         closeDB(); // DB 닫음.
+         
+	}
+	
+	
+//  -----------------------------------------------------------------------------------------------------
+//	------------------------------------------- 송장 주정 메소드 ----------------------------------------------
+	
+	private void update() throws SQLException {
+		
+		connectDB();
+		
+		int i, rowNum;
+	    String orderno = null, obj=null, name = null, addr = null, tel = null, table_order_no = null;
+	     
+	        DefaultTableModel model = (DefaultTableModel) ta_LoL.getModel();
+	        
+	        orderno = txt_in1.getText().toString().trim(); // 텍필에 있는 값들 저장.
+	        obj = txt_in2.getText().toString().trim();
+	        name = txt_in3.getText().toString().trim();
+	        addr = txt_in4.getText().toString().trim();
+	        tel = txt_in5.getText().toString().trim();
+	      
+	        
+	        try {  
+	            String sql = "update delivery_select set order_no = ?, object_name = ? , name = ?, tel = ?, addr = ? where order_no = ?";
+	            ps = conn.prepareStatement(sql);//                  1                2          3        4         5                  6
+	            ps.setString(1, orderno); //	order_no ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ▲				 ▲			▲		 ▲		   ▲				  ▲
+	            ps.setString(2, obj);//			object_name ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ-┘			|		 |		   |				  |
+	            ps.setString(3, name);//		name ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ┘		 |		   |				  |
+	            ps.setString(4, tel);//			tel ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ  ㅡ ㅡ ┘		   |				  |
+	            ps.setString(5, addr);// 		addr ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ  ┘				  |
+	            ps.setString(6, orderno);//		where order_no ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ┘
+	            rowNum = ps.executeUpdate();
+	            
+	            if (rowNum == 0) // 업데이트 한 열이 0개라면 에러.
+	             System.out.println("데이터베이스 수정 실패!");
+	            else
+	            { // 업데이트 한 열이 1개 이상이라면 성공.
+	             rowNum = model.getRowCount();
+	                for (i=1; i<rowNum; i++)
+	                {
+	                	table_order_no = model.getValueAt(i, 0).toString().trim(); // 비교에 필요한 order_no 생성.
+	                 if (table_order_no.equals(orderno)) // 비교용 order_no와 입력한 order_no가 같는지 확인함.
+	                 {
+	                  model.setValueAt(orderno, i, 0); // 배열은 0부터 시작.
+	                  model.setValueAt(obj, i, 1);
+	                  model.setValueAt(name, i, 2);
+	                  model.setValueAt(tel, i, 3);
+	                  model.setValueAt(addr, i, 4);
+	                  break; // 마지막 orderno는 조건절이며 송출할 필요는 없음.
+	                 }
+	                }
+	             System.out.println("데이터베이스 수정 성공 != " + rowNum);
+	            }
+	            
+	        }catch(Exception e1) {
+	            System.out.println("데이터베이스 연결 실패!"+e1.getMessage());
+	        }
+	        select(); // 수정 후에 수정 확인을 위해서 시스템에서 자발적으로 select를 실행.
+//						 하는 것 까지는 좋은데 이클립스에서 에러가 나오는데 실행에는 문제가 없음.
+	        closeDB();// db 종료
+	        
+	}
+	
+	
+	
+	public static void main(String[] args) {
+		
+	} // main method end
+} // class main end

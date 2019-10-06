@@ -1,0 +1,311 @@
+package JaBae.Customer.Main;
+import static javax.swing.JOptionPane.showMessageDialog;
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import org.omg.PortableServer.ID_ASSIGNMENT_POLICY_ID;
+
+import JaBae.Customer.DAO.MemberDAO;
+import JaBae.Customer.VO.MemberVO;
+import JaBae.Login.DAO.SignUpDAO;
+import JaBae.Login.Main.LoginMain;
+import JaBae.Login.VO.SellerVO;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import java.awt.Font;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+
+import java.awt.GridLayout;
+import javax.swing.JTextField;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+import javax.swing.JSplitPane;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+import java.awt.Color;
+import java.awt.SystemColor;
+
+public class Cus_Info extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField tfId;
+	private JTextField tfName;
+	private JTextField tfTel;
+	private JTextField tfBirth;
+	private JTextField tfAddr2;
+	private JPasswordField tfPwd;
+	private JPasswordField tfPwdChk;
+	private static String toss;
+	MemberDAO mdao = new MemberDAO();
+	private JTextField tfTel2;
+	private JTextField tfTel3;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Cus_Info frame = new Cus_Info(toss);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Cus_Info(String toss) {
+		this.toss = toss;
+		setTitle("택배 시스템 프로그램(회원)");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 450, 598);
+		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.control);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+
+		JPanel la_panel = new JPanel();
+		la_panel.setBackground(SystemColor.control);
+		FlowLayout flowLayout = (FlowLayout) la_panel.getLayout();
+		flowLayout.setVgap(20);
+		contentPane.add(la_panel, BorderLayout.NORTH);
+
+		JLabel la_title = new JLabel("정보 수정");
+		la_title.setFont(new Font("돋움", Font.PLAIN, 30));
+		la_panel.add(la_title);
+
+		JPanel btnPanel = new JPanel();
+		btnPanel.setBackground(SystemColor.control);
+		FlowLayout flowLayout_1 = (FlowLayout) btnPanel.getLayout();
+		flowLayout_1.setVgap(20);
+		contentPane.add(btnPanel, BorderLayout.SOUTH);
+
+		// 취소 이벤트
+		JButton btnReset = new JButton("취소");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+				tfPwd.setText("");
+				tfPwdChk.setText("");
+				tfTel.setText("");
+				tfTel2.setText("");
+				tfTel3.setText("");
+				tfBirth.setText("");
+
+			}
+		});
+		btnPanel.add(btnReset);
+
+	
+		btnPanel.add(btnUpdate);
+
+		//
+		JButton btnDelete = new JButton("탈퇴");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int result = JOptionPane.showConfirmDialog(null, "탈퇴 하시겠습니까?", "Confirm", JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) {
+					mdao.Delete(toss);
+					LoginMain LM = new LoginMain();
+					LM.setVisible(true);
+					dispose();
+
+				}
+
+			}
+		});
+		btnPanel.add(btnDelete);
+
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.CENTER);
+		panel.setLayout(new BorderLayout(0, 20));
+
+		JPanel Form = new JPanel();
+		Form.setBackground(SystemColor.control);
+		panel.add(Form, BorderLayout.CENTER);
+		Form.setBorder(new EmptyBorder(50, 30, 20, 30));
+		Form.setLayout(null);
+
+		JLabel lb_Id = new JLabel("아이디");
+		lb_Id.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_Id.setBounds(42, 36, 57, 15);
+		Form.add(lb_Id);
+
+		JLabel lb_pwd = new JLabel("비밀번호");
+		lb_pwd.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_pwd.setBounds(42, 89, 72, 15);
+		Form.add(lb_pwd);
+
+		JLabel lb_name = new JLabel("이름");
+		lb_name.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_name.setBounds(42, 139, 48, 15);
+		Form.add(lb_name);
+
+		JLabel lb_addr = new JLabel("주소");
+		lb_addr.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_addr.setBounds(42, 189, 57, 15);
+		Form.add(lb_addr);
+
+		JLabel lb_tel = new JLabel("전화번호");
+		lb_tel.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_tel.setBounds(42, 289, 72, 15);
+		Form.add(lb_tel);
+
+		JLabel lb_birth = new JLabel("생년월일");
+		lb_birth.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_birth.setBounds(42, 339, 72, 15);
+		Form.add(lb_birth);
+
+		tfId = new JTextField();
+		tfId.setBounds(112, 36, 116, 21);
+		Form.add(tfId);
+		tfId.setColumns(10);
+		tfId.setEditable(false);
+
+		
+		tfName = new JTextField();
+		tfName.setBounds(112, 136, 116, 21);
+		Form.add(tfName);
+		tfName.setColumns(10);
+		tfName.setEditable(false);
+		
+		JComboBox cbboxLocal = new JComboBox();
+		cbboxLocal.setBounds(111, 186, 116, 21);
+		Form.add(cbboxLocal);
+		cbboxLocal.addItem("지역을 선택해주세요");
+		
+		ArrayList<SellerVO> localList = new ArrayList<SellerVO>();
+		SignUpDAO getLocal = new SignUpDAO();
+		try {
+			cbboxLocal.removeAllItems();
+			localList = getLocal.getLocalList();
+			int localIndex = 0;
+			for(SellerVO local : localList) {
+				cbboxLocal.addItem(local.getLocal());
+				localIndex++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		tfAddr2 = new JTextField();
+		tfAddr2.setColumns(20);
+		tfAddr2.setBounds(112, 236, 265, 21);
+
+		Form.add(tfAddr2);
+
+		tfTel = new JTextField();
+		tfTel.setBounds(112, 286, 57, 18);
+		Form.add(tfTel);
+		tfTel.setColumns(10);
+
+		tfBirth = new JTextField();
+		tfBirth.setBounds(112, 336, 116, 21);
+		Form.add(tfBirth);
+		tfBirth.setColumns(10);
+
+		tfPwd = new JPasswordField();
+
+		tfPwd.setBounds(112, 86, 116, 21);
+		Form.add(tfPwd);
+
+		tfPwdChk = new JPasswordField();
+	
+		tfPwdChk.setBounds(261, 86, 116, 21);
+		Form.add(tfPwdChk);
+		
+		tfTel2 = new JTextField();
+		tfTel2.setBounds(190, 286, 57, 21);
+		Form.add(tfTel2);
+		tfTel2.setColumns(10);
+		
+		tfTel3 = new JTextField();
+		tfTel3.setColumns(10);
+		tfTel3.setBounds(265, 286, 57, 21);
+		Form.add(tfTel3);
+
+		/***********************************************************************************************************/
+//화면 동작시 바로 값 보여주는 기능
+		MemberDAO mdao = new MemberDAO();
+		MemberVO vo = mdao.getInfo(toss);
+		tfId.setText(toss);
+		tfName.setText(vo.getName());
+
+		tfBirth.setText(vo.getBirth());
+		tfTel.setText(vo.getTel());
+		tfTel2.setText(vo.getTel2());
+		tfTel3.setText(vo.getTel3());
+		tfAddr2.setText(vo.getAddr2());
+		
+		JLabel lblNewLabel = new JLabel("-");
+		lblNewLabel.setFont(new Font("굴림", Font.PLAIN, 20));
+		lblNewLabel.setBounds(175, 289, 24, 15);
+		Form.add(lblNewLabel);
+		
+	
+		
+		JLabel label = new JLabel("-");
+		label.setFont(new Font("굴림", Font.PLAIN, 20));
+		label.setBounds(250, 289, 24, 15);
+		Form.add(label);
+		
+		/************************************************************************/
+		JButton btnUpdate = new JButton("정보 수정");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String pwd = tfPwd.getText();
+				String local = 
+				String addr2 = tfAddr2.getText().trim();
+				String tel = tfTel.getText().trim()+"-" + tfTel2.getText().trim()+"-" + tfTel3.getText().trim();
+
+				
+				String regExp = "^[a-z0-9_-]{8,20}$";
+				if (!tfPwd.getText().matches(regExp)) {
+					showMessageDialog(null, "비밀번호 형식이 올바르지 않습니다!");
+					tfPwd.requestFocus();
+					return;
+
+				}
+				
+				String birth = "";
+				if (tfBirth.getText() != null) {
+
+					birth = tfBirth.getText();
+
+				}
+				if(tfAddr1.getText()==null) {
+					
+					showMessageDialog(null, "비밀번호 형식이 올바르지 않습니다!");
+					tfAddr1.requestFocus();
+					return;
+				}
+
+				String cus_id = toss;
+
+				mdao.Update(pwd, addr,addr2, tel, birth, cus_id);
+				showMessageDialog(null, "수정 완료!");
+				dispose();
+			}
+		});
+		
+		setLocationRelativeTo(null);
+	}
+}

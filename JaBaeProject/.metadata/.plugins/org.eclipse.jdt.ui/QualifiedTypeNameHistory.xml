@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="JaBae.Login.VO.MemberVO"/>
+<fullyQualifiedTypeName name="JaBae.Login.DAO.MemberDAO"/>
+<fullyQualifiedTypeName name="JaBae.Login.Main.TextHint"/>
+<fullyQualifiedTypeName name="JaBae.Login.Main.Cus_JoinView"/>
+<fullyQualifiedTypeName name="JaBae.Customer.DAO.searchDAO"/>
+<fullyQualifiedTypeName name="JaBae.Login.DAO.SignUpDAO"/>
+<fullyQualifiedTypeName name="JaBae.Customer.Main.selectView"/>
+<fullyQualifiedTypeName name="JaBae.Login.DAO.LoginDAO"/>
+<fullyQualifiedTypeName name="JaBae.Login.Main.etc.LoginCustomer"/>
+<fullyQualifiedTypeName name="MemberDAO.MemberDAO"/>
+<fullyQualifiedTypeName name="JaBae.Customer.DAO.MemberVO"/>
+<fullyQualifiedTypeName name="JaBae.Customer.DAO.SearchDAO"/>
+<fullyQualifiedTypeName name="JaBae.Customer.DAO.SearchVO"/>
+<fullyQualifiedTypeName name="JaBae.Login.Main.LoginMain"/>
+<fullyQualifiedTypeName name="JaBae.Customer.DAO.MemberDAO"/>
+<fullyQualifiedTypeName name="JaBae.Customer.Main.Cus_selectView"/>
+<fullyQualifiedTypeName name="JaBae.Seller.Seller_Main"/>
+<fullyQualifiedTypeName name="JaBae.Customer.Be_Cus.Be_Cus_OrderView"/>
+<fullyQualifiedTypeName name="JaBae.admin.Main.AdminMain"/>
+<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
+<fullyQualifiedTypeName name="javax.swing.UIManager"/>
+<fullyQualifiedTypeName name="Gisa.LocalDeliveryDAO"/>
+<fullyQualifiedTypeName name="JaBae.admin.VO.GisaVO"/>
+<fullyQualifiedTypeName name="JaBae.Gisa.DAO.LocalDeliveryDAO"/>
+<fullyQualifiedTypeName name="JaBae.Gisa.VO.GisaVO"/>
+<fullyQualifiedTypeName name="JaBae.Gisa.Event.LocalDeliveryEventClass"/>
+<fullyQualifiedTypeName name="JaBae.Login.Main.LoginCustomer.Cus_Login"/>
+<fullyQualifiedTypeName name="JaBae.Gisa.Main.LocalDeliveryList"/>
+<fullyQualifiedTypeName name="JaBae.Gisa.Main.MyDeliveryList"/>
+<fullyQualifiedTypeName name="JaBae.Gisa.Main.GisaMain"/>
+<fullyQualifiedTypeName name="javax.swing.JOptionPane"/>
+<fullyQualifiedTypeName name="JaBae.Login.Main.LoginSeller.Seller_SignUp"/>
+</qualifiedTypeNameHistroy>

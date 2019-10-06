@@ -1,0 +1,50 @@
+package JaBae.admin.Main;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+
+public class GisaMgtDetail extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GisaMgtDetail frame = new GisaMgtDetail();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public GisaMgtDetail() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(430,515);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblGisaName = new JLabel("이름");
+		lblGisaName.setBounds(53, 143, 57, 15);
+		contentPane.add(lblGisaName);
+		
+		JLabel lblGisaId = new JLabel("아이디");
+		lblGisaId.setBounds(53, 84, 57, 15);
+		contentPane.add(lblGisaId);
+	}
+}

@@ -1,0 +1,57 @@
+1569999292064	Delete element
+1569999968381	Delete elements
+1570000658463	Delete element
+1570000701545	Delete element
+1570000703282	Delete element
+1570000704852	Delete element
+1570000706305	Delete element
+1570000726268	Delete elements
+1570001064879	Delete elements
+1570001094122	Delete element
+1570001096389	Delete element
+1570001098319	Delete element
+1570001118202	Delete element
+1570001138466	Delete element
+1570001152304	Delete element
+1570001238920	Delete elements
+1570001263646	Delete elements
+1570001304661	Delete element
+1570001306018	Delete element
+1570001321915	Delete elements
+1570001368586	Delete element
+1570006129896	Delete elements
+1570147994870	Delete element
+1570148148430	Delete element
+1570148225520	Delete element
+1570148242746	Delete element
+1570148251349	Delete element
+1570148262490	Delete element
+1570148337250	Delete element
+1570148490033	Delete element
+1570148840911	Delete element
+1570148842958	Delete element
+1570148844333	Delete element
+1570148847348	Delete element
+1570149688905	Delete element
+1570149690483	Delete element
+1570149692389	Delete element
+1570149693733	Delete element
+1570149751252	Delete element
+1570149752305	Delete element
+1570149777746	Delete element
+1570155836021	Delete elements
+1570157231595	Delete elements
+1570160998554	Delete element
+1570161005266	Delete element
+1570161203103	Rename type 'LocalDeliveryList'
+1570161213969	Rename type 'LocalDeliveryEventClass'
+1570161232537	Rename type 'LocalDeliveryDAO'
+1570161299218	Move compilation unit
+1570161302335	Move compilation unit
+1570161306860	Move compilation unit
+1570162030679	Delete element
+1570162243008	Copy compilation unit
+1570162254539	Rename type 'AdminMain'
+1570164499278	Delete element
+1570165308679	Move compilation units
+1570167109539	Encapsulate field 'pwd2'

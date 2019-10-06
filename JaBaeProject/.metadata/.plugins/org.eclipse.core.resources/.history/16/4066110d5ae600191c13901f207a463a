@@ -1,0 +1,180 @@
+package JaBae.Login.DAO;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import JaBae.Login.VO.SignUpVO;
+
+public class LoginDAO {
+//Data Access Object
+	// 공식처럼 사용,사용 많이 함
+
+	private Connection conn = null;
+	private PreparedStatement pstm = null;
+	private ResultSet rs = null; // select문 수행 후 결과를 저장하는 객체
+
+	public void connectDB() {
+		String url = "jdbc:oracle:thin:@localhost:1521/xe"; // 2.url설정
+		String id = "Sample";
+		String pwd = "sample";
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");// 1.드라이버 로딩
+			System.out.println("jdbc 연결 성공");
+
+			conn = DriverManager.getConnection(url, id, pwd); // 3.db연결 접속 확인
+			System.out.println("oracle연결 성공");
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("jdbc 연결 실패");
+			e.printStackTrace();
+		} catch (SQLException e) {
+			System.out.println("orcale연결 실패");
+		}
+
+	}
+
+	public void closeDB() {
+		try {
+			if (pstm != null)
+				pstm.close();
+			if (rs != null)
+				rs.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+
+		}
+
+	}
+
+	/*****************************************************************************************/
+	// 고객 회원가입 기능
+	public void insertOne(String id, String pwd, String name, String addr, String addr2, String tel, String birth) {
+		connectDB();
+
+		String SQL = "insert into customer values(?,?,?,?,?,?,?, sysdate,0)";
+
+		try { // 안쓰면 에러남
+			pstm = conn.prepareStatement(SQL);// 공식
+			pstm.setString(1, id);// 첫번째 물음표
+			pstm.setString(2, pwd);// 두번째 물음표
+			pstm.setString(3, name);
+			pstm.setString(4, addr);
+			pstm.setString(5, addr2);
+			pstm.setString(6, tel);
+			pstm.setString(7, birth);
+
+			pstm.executeUpdate();// insert, delete, update문에 사용=>수행 결과가 없기 때문
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		closeDB();// 연결 끊기
+
+	}
+
+	/*****************************************************************************************/
+	//id 중복 체크
+	public boolean getid(String id) {//
+		boolean result = false;
+		ArrayList<SignUpVO> botari = new ArrayList<SignUpVO>();
+
+		connectDB();
+		String SQL = "select cus_id from customer where cus_id=?";
+
+		try {
+			pstm = conn.prepareStatement(SQL);
+			pstm.setString(1, id);
+
+			rs = pstm.executeQuery();
+			if (rs.next()) {
+				result = true;
+			} else {
+				result = false;
+			}
+
+			// rs테이블의 모든 레코드를 botari에 담는 과정
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} // 공식
+
+		closeDB();
+		return result;
+	}
+
+	/*****************************************************************************************/
+	//로그인 기능
+	public boolean loginCheck(String id, String pwd) {
+		boolean check = false;
+		connectDB();
+		String SQL = "Select * from customer where cus_id= ? and pwd =?";
+
+		try {
+			pstm = conn.prepareStatement(SQL);
+			pstm.setString(1, id);
+			pstm.setString(2, pwd);
+
+			rs = pstm.executeQuery();// select문 수행시 사용 => table결과 보여줌
+
+			// 결과출력
+			if (rs.next() == true) {// rs.next() => 커서 한칸 밑으로 옮김
+
+				check = true;
+
+			} else {
+				check = false;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} // 공식
+
+		closeDB();
+		return check;
+	}
+
+	/*****************************************************************************************/
+	// 관리자 로그인 기능
+		public boolean loginAdmin(String id, String pwd) {
+			boolean checkAdmin = false;
+
+			connectDB();
+
+			String SQL = "select * from admin where ad_id=? and pwd = ?";
+
+			try {
+				pstm = conn.prepareStatement(SQL);
+				pstm.setString(1, id);
+				pstm.setString(2, pwd);
+
+				rs = pstm.executeQuery();// select문 수행시 사용 => table결과 보여줌
+
+				// 결과출력
+				if (rs.next() == true) {// rs.next() => 커서 한칸 밑으로 옮김
+
+					checkAdmin = true;
+					System.out.println(checkAdmin);
+				} else {
+					checkAdmin = false;
+
+					System.out.println(checkAdmin);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} // 공식
+
+			closeDB();
+			return checkAdmin;
+
+		}
+
+}

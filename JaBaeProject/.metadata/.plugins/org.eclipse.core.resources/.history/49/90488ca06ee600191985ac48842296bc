@@ -1,0 +1,131 @@
+package JaBae.Seller;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import JaBae.Login.Main.LoginMain;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
+
+public class Seller_Main extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Seller_Main frame = new Seller_Main();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Seller_Main() {
+		setVisible(true);
+		setTitle("자배 택배");
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(550, 200, 900, 650);
+		getContentPane().setLayout(null);
+		
+		JButton btn_Logout = new JButton("로그아웃"); // 로그아웃 버튼 btn_Logout
+		btn_Logout.setBounds(768, 10, 114, 42); 
+		getContentPane().add(btn_Logout);
+		
+		JLabel lb_hello_1 = new JLabel("언제나   최선을   다하는"); // 소개 라벨1
+		lb_hello_1.setFont(new Font("굴림", Font.PLAIN, 21));
+		lb_hello_1.setBounds(328, 107, 236, 42);
+		getContentPane().add(lb_hello_1);
+		
+		JLabel lb_hello_2 = new JLabel("     자배 택배"); // 소개 라벨2
+		lb_hello_2.setFont(new Font("굴림", Font.PLAIN, 21));
+		lb_hello_2.setBounds(359, 159, 164, 51);
+		getContentPane().add(lb_hello_2);
+		
+		JLabel lb_hello_3 = new JLabel("  언제나 감사합니다 ^^7"); // 소개 라벨3
+		lb_hello_3.setFont(new Font("굴림", Font.PLAIN, 21));
+		lb_hello_3.setBounds(328, 220, 236, 25);
+		getContentPane().add(lb_hello_3);
+		
+		JButton btn_ConIn = new JButton("송장등록"); // 송장등록 이동 버튼
+		btn_ConIn.setBounds(230, 340, 90, 60);
+		getContentPane().add(btn_ConIn);
+		
+		JButton btn_ConSe = new JButton("송장조회"); // 송장조회 이동 버튼
+		btn_ConSe.setBounds(560, 340, 90, 60);
+		getContentPane().add(btn_ConSe);
+		
+		JButton btn_ConFt = new JButton("정액제 확인 및 등록");  // 정액제 등록 이동 버튼
+		btn_ConFt.setBounds(265, 440, 345, 40); 
+		getContentPane().add(btn_ConFt);
+
+		
+//		---------------------------------------------------------------------------------------
+//		--------------------------------- 버튼 기능동작 --------------------------------------------
+//		---------------------------------------------------------------------------------------		
+		
+		btn_ConSe.addActionListener(new ActionListener() { // 송장조회 페이지로 이동 버튼 btn_ConSe
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				new Seller_ConveyorSelect();
+			}
+		});
+		
+		btn_ConIn.addActionListener(new ActionListener() { // 송장등록 페이지로 이동 버튼 btn_ConIn
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				new Seller_Conveyor();
+			}
+		});
+		
+		
+		btn_ConFt.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) { // 정액권 등록 페이지로 이동 버튼 btn_ConFt
+				dispose();
+				new Seller_FreeTicket();
+				}
+		});
+		
+		btn_Logout.addActionListener(new ActionListener() { // 로그인 페이지로 이동 버튼 btn_Logout
+			public void actionPerformed(ActionEvent e) {
+				LoginMain newWindow = new LoginMain();
+				
+				int ans = JOptionPane.showConfirmDialog(null, "정말 로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if(ans == JOptionPane.CLOSED_OPTION) {
+					
+				} else if(ans == JOptionPane.YES_OPTION) {
+					newWindow.setFocusable(true);
+					newWindow.setVisible(true);
+					dispose();
+				} else {
+					
+				}
+
+			}
+		});
+		
+		
+	}
+}

@@ -1,0 +1,295 @@
+/*
+ * w.이승연
+ * */
+
+package JaBae.admin.Main.Mgt;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
+import JaBae.admin.EventAction.SaelsEventAction.SalesCustomerEventActionClass;
+import JaBae.admin.EventAction.SaelsEventAction.SalesDateEventActionClass;
+import JaBae.admin.Main.AdminMain;
+
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.swing.JRadioButton;
+import javax.naming.ldap.Rdn;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.JLabel;
+import javax.swing.JScrollBar;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JToggleButton;
+import javax.swing.JCheckBox;
+
+public class SalesManagement extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField tfStartDay;
+	private JTextField tfLastDay;
+	private JTable tableSales;
+	
+	Vector titleSales = null;
+	private JRadioButton rdbtnCustomer;
+	private JTextField tfName, tfId;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					SalesManagement frame = new SalesManagement();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public SalesManagement() {
+		
+		setTitle("매출 현황");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(900,650);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		
+		JPanel panelNorth = new JPanel();
+		contentPane.add(panelNorth, BorderLayout.NORTH);
+		panelNorth.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JPanel panelTop = new JPanel();
+		panelTop.setBorder(new EmptyBorder(0, 0, 0, 0));
+		panelNorth.add(panelTop);
+		
+		JPanel panelBack = new JPanel();
+		panelBack.setBorder(new EmptyBorder(0, 0, 0, 280));
+		panelTop.add(panelBack);
+		
+		JButton btnBack = new JButton("←");
+		
+		panelBack.add(btnBack);
+		
+		JPanel panelRadioButton = new JPanel();
+		panelRadioButton.setBorder(new EmptyBorder(0, 0, 0, 320));
+		panelTop.add(panelRadioButton);
+		panelRadioButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JRadioButton rdbtnDate = new JRadioButton("날짜 별 조회");
+		rdbtnCustomer = new JRadioButton("회원 별 조회");
+
+		rdbtnDate.setSelected(true);
+		
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(rdbtnDate);
+		bg.add(rdbtnCustomer);
+		
+		panelRadioButton.add(rdbtnDate);
+		panelRadioButton.add(rdbtnCustomer);
+		/********************************************************************************/
+		
+		JPanel panelDate = new JPanel();
+		panelNorth.add(panelDate);
+		
+		JButton btnDay = new JButton("하루");
+		
+		panelDate.add(btnDay);
+		
+		JButton btnMonth = new JButton("1개월");
+		panelDate.add(btnMonth);
+		
+		JButton btn6Month = new JButton("6개월");
+		panelDate.add(btn6Month);
+		
+		JButton btnYear = new JButton("1년");
+		panelDate.add(btnYear);
+		
+		JPanel panelSearch = new JPanel();
+		panelNorth.add(panelSearch);
+		panelSearch.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JPanel panelDateSearch = new JPanel();
+		panelSearch.add(panelDateSearch);
+		
+		tfStartDay = new JTextField();
+		panelDateSearch.add(tfStartDay);
+		tfStartDay.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("~");
+		panelDateSearch.add(lblNewLabel);
+		
+		tfLastDay = new JTextField();
+		panelDateSearch.add(tfLastDay);
+		tfLastDay.setColumns(10);
+		
+		JButton btnDateSearch = new JButton("검색");
+		panelDateSearch.add(btnDateSearch);
+		
+		/********************************************************************/
+		
+		JPanel panelCustomerSearch = new JPanel();
+		panelCustomerSearch.setBorder(new EmptyBorder(0, 100, 0, 0));
+
+		JLabel lblName = new JLabel("이름");
+		panelCustomerSearch.add(lblName);
+		
+		tfName = new JTextField();
+		tfName.setColumns(10);
+		panelCustomerSearch.add(tfName);
+		
+		JLabel lblId = new JLabel("아이디");
+		panelCustomerSearch.add(lblId);
+		
+		tfId = new JTextField();
+		tfId.setColumns(10);
+		panelCustomerSearch.add(tfId);
+		
+		JButton btnCustomerSearch = new JButton("검색");
+		panelCustomerSearch.add(btnCustomerSearch);
+		
+		/******************************************************************************/
+		JPanel panelDetail = new JPanel();
+		
+		JRadioButton rdbtnCount = new JRadioButton("개수 별 보기");
+		JRadioButton rdbtnDay = new JRadioButton("일 별 모아보기");
+		JRadioButton rdbtnMonth = new JRadioButton("월 별 모아보기");
+		JRadioButton rdbtnYear = new JRadioButton("연도별 모아보기");
+		
+		ButtonGroup bgDate = new ButtonGroup();
+		bgDate.add(rdbtnCount);
+		bgDate.add(rdbtnDay);
+		bgDate.add(rdbtnMonth);
+		bgDate.add(rdbtnYear);
+		
+		panelDetail.add(rdbtnCount);
+		panelDetail.add(rdbtnDay);
+		panelDetail.add(rdbtnMonth);
+		panelDetail.add(rdbtnYear);
+		/******************************************************************************/
+		
+		JPanel panelCenter = new JPanel();
+		contentPane.add(panelCenter, BorderLayout.CENTER);
+		
+		tableSales = new JTable();
+		panelCenter.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JScrollPane spTable = new JScrollPane();
+		panelCenter.add(spTable);
+		
+		titleSales = new Vector<>();
+		titleSales.add("판매자 아이디"); titleSales.add("구매자 아이디");  
+		titleSales.add("주문일"); titleSales.add("도착일"); titleSales.add("판매액"); 
+		titleSales.add("정기권 사용");
+		DefaultTableModel model = new DefaultTableModel(titleSales, 0);
+		
+		
+		tableSales = new JTable(model);
+		tableSales.getTableHeader().setReorderingAllowed(false); 
+		spTable.setViewportView(tableSales);
+		
+		
+		//테이블 가운데 정렬
+		DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+		dtcr.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		TableColumnModel tcm = tableSales.getColumnModel();
+		for(int i =0; i < tcm.getColumnCount(); i++) {
+			tcm.getColumn(i).setCellRenderer(dtcr);
+		}
+		
+		
+		/*********************************버튼 클릭********************************************/
+		btnBack.addActionListener(new ActionListener() { //뒤로가기
+			public void actionPerformed(ActionEvent e) {
+				AdminMain newWindow = new AdminMain();
+				newWindow.setVisible(true);
+				dispose();
+			}
+		});
+		
+		//날짜 가져옴
+		btnDay.addActionListener(new SalesDateEventActionClass(tfStartDay, tfLastDay));
+		btnMonth.addActionListener(new SalesDateEventActionClass(tfStartDay, tfLastDay));
+		btn6Month.addActionListener(new SalesDateEventActionClass(tfStartDay, tfLastDay));
+		btnYear.addActionListener(new SalesDateEventActionClass(tfStartDay, tfLastDay));
+		
+		//기능 별 검색
+		btnDateSearch.addActionListener(new SalesDateEventActionClass(tableSales, model,tfStartDay, tfLastDay, rdbtnCount, rdbtnDay, rdbtnMonth, rdbtnYear)); //날짜 검색
+		btnCustomerSearch.addActionListener(new SalesCustomerEventActionClass(tfName,tfId, model)); //회원 별 검색
+		
+		
+		rdbtnDate.addActionListener(new ActionListener() {//날짜별 검색
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnDate.isSelected() == true) {
+					model.setNumRows(0);
+					
+					panelNorth.removeAll();
+					panelNorth.revalidate();
+					panelNorth.repaint();
+					panelSearch.removeAll();
+					panelSearch.revalidate();
+					panelSearch.repaint();
+					
+					panelNorth.add(panelTop);
+					panelNorth.add(panelDate);
+					panelNorth.add(panelSearch);
+					panelSearch.add(panelDateSearch);
+					
+				}
+			}
+		});
+		
+		rdbtnCustomer.addActionListener(new ActionListener() { //회원 별 검색
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnCustomer.isSelected() == true) {
+					model.setNumRows(0);
+					
+					panelNorth.removeAll();
+					panelNorth.revalidate();
+					panelNorth.repaint();
+					panelSearch.removeAll();
+					panelSearch.revalidate();
+					panelSearch.repaint();
+					
+					panelNorth.add(panelTop);
+					panelNorth.add(panelSearch);
+					panelSearch.add(panelCustomerSearch);
+				}
+				
+			}
+		});
+		
+		final Boolean detailChk = true;
+		
+		setLocationRelativeTo(null);
+	}
+}

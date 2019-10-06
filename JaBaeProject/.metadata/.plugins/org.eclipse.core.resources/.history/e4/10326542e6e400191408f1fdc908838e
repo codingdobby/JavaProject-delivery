@@ -1,0 +1,259 @@
+package JaBae.Login.Main.etc;
+
+import static javax.swing.JOptionPane.showMessageDialog;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import JaBae.Customer.DAO.MemberDAO;
+import JaBae.Customer.DAO.MemberVO;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.FlowLayout;
+import javax.swing.JRadioButton;
+import java.awt.CardLayout;
+import javax.swing.JTextField;
+import java.awt.GridLayout;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
+
+public class FindInfoView extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField tfName;
+	private JTextField tfTel;
+	private JTextField tfId;
+	private JTextField tfTel1;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					FindInfoView frame = new FindInfoView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public FindInfoView() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 548, 375);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+
+		JPanel panelTop = new JPanel();
+		FlowLayout fl_panelTop = (FlowLayout) panelTop.getLayout();
+		fl_panelTop.setVgap(20);
+		contentPane.add(panelTop, BorderLayout.NORTH);
+
+		JLabel lb_top = new JLabel("아이디 / 비밀번호 찾기");
+		lb_top.setFont(new Font("돋움", Font.PLAIN, 30));
+		panelTop.add(lb_top);
+
+		JPanel paneBottom = new JPanel();
+		contentPane.add(paneBottom, BorderLayout.CENTER);
+		paneBottom.setLayout(new BorderLayout(0, 0));
+
+		JPanel panelRdbtn = new JPanel();
+		paneBottom.add(panelRdbtn, BorderLayout.NORTH);
+
+		JRadioButton rbId = new JRadioButton("아이디 찾기");
+
+		panelRdbtn.add(rbId);
+
+		JRadioButton rbPwd = new JRadioButton("비밀번호 찾기");
+
+		JPanel card = new JPanel();
+		card.setBorder(new EmptyBorder(0, 0, 0, -50));
+		paneBottom.add(card, BorderLayout.CENTER);
+		card.setLayout(new BorderLayout(0, 0));
+
+		// 비번 정보
+
+		JPanel panelPwdInfo = new JPanel();
+		//card.add(panelPwdInfo, BorderLayout.SOUTH);
+		panelPwdInfo.setLayout(new BorderLayout(0, 0));
+
+		JPanel panelPwdFind = new JPanel();
+		panelPwdFind.setBorder(new EmptyBorder(60, 60, 60, 60));
+		panelPwdInfo.add(panelPwdFind, BorderLayout.CENTER);
+		panelPwdFind.setLayout(new GridLayout(0, 1, 50, 30));
+
+		JPanel panelId = new JPanel();
+		panelPwdFind.add(panelId);
+
+		JLabel lbl_Id = new JLabel("아이디");
+		panelId.add(lbl_Id);
+
+		tfId = new JTextField();
+		panelId.add(tfId);
+		tfId.setColumns(10);
+
+		JPanel panelPwdTel = new JPanel();
+		panelPwdFind.add(panelPwdTel);
+
+		JLabel lblNewLabel_3 = new JLabel("전화 번호");
+		panelPwdTel.add(lblNewLabel_3);
+
+		tfTel1 = new JTextField();
+		panelPwdTel.add(tfTel1);
+		tfTel1.setColumns(10);
+
+		JPanel panel_btnPwd = new JPanel();
+		panel_btnPwd.setBorder(new EmptyBorder(60, 30, 60, 30));
+		panelPwdInfo.add(panel_btnPwd, BorderLayout.EAST);
+		panel_btnPwd.setLayout(new BorderLayout(0, 0));
+
+		JButton btnFindPwd = new JButton("비번찾기");
+		btnFindPwd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String id = tfId.getText();
+				String tel = tfTel1.getText();
+
+				MemberDAO mdao = new MemberDAO();
+				MemberVO vo = mdao.getID(id, tel);
+
+				if (tfName.getText().equals("")) {
+
+					showMessageDialog(null, "아이디를 입력해주세요!");
+					return;
+
+				} else if (tfTel1.getText().equals("")) {
+					showMessageDialog(null, "전화번호를 입력해주세요!");
+					return;
+
+				}
+
+				else {
+
+					showMessageDialog(null, vo.getPwd());
+					return;
+				}
+
+			}
+		});
+		panel_btnPwd.add(btnFindPwd);
+
+		JPanel panelIdInfo = new JPanel();
+		card.add(panelIdInfo, BorderLayout.CENTER);
+		panelIdInfo.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JPanel PanelIdFind = new JPanel();
+		panelIdInfo.add(PanelIdFind);
+		PanelIdFind.setBorder(new EmptyBorder(60, 0, 60, 0));
+		PanelIdFind.setLayout(new GridLayout(0, 1, 50, 0));
+
+		JPanel panelName = new JPanel();
+		panelName.setBorder(new EmptyBorder(0, 20, 0, 0));
+		PanelIdFind.add(panelName);
+
+		JLabel lbl_Name = new JLabel("이름");
+		panelName.add(lbl_Name);
+
+		tfName = new JTextField();
+		panelName.add(tfName);
+		tfName.setColumns(10);
+
+		JPanel panelIdTel = new JPanel();
+		PanelIdFind.add(panelIdTel);
+
+		JLabel lbl_tel = new JLabel("전화번호");
+		panelIdTel.add(lbl_tel);
+
+		tfTel = new JTextField();
+		panelIdTel.add(tfTel);
+		tfTel.setColumns(10);
+
+		JPanel panel_btnId = new JPanel();
+		panelIdInfo.add(panel_btnId);
+		panel_btnId.setBorder(new EmptyBorder(70, 70, 80, 100));
+
+		JButton btnFindId = new JButton("아이디 찾기");
+		btnFindId.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = tfName.getText();
+				String tel = tfTel.getText();
+
+				MemberDAO mdao = new MemberDAO();
+				MemberVO vo = mdao.getID(name, tel);
+
+				if (tfName.getText().equals("")) {
+
+					showMessageDialog(null, "이름을 입력해주세요!");
+					return;
+
+				} else if (tfTel.getText().equals("")) {
+					showMessageDialog(null, "전화번호를 입력해주세요!");
+					return;
+
+				}
+
+				else {
+
+					showMessageDialog(null, vo.getCus_id());
+					return;
+				}
+
+			}
+		});
+		panel_btnId.setLayout(new GridLayout(0, 1, 0, 0));
+		panel_btnId.add(btnFindId);
+
+		ButtonGroup bg = new ButtonGroup();
+
+		panelRdbtn.add(rbPwd);
+		bg.add(rbId);
+		bg.add(rbPwd);
+
+		rbId.setSelected(true);
+
+		rbId.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (rbId.isSelected() == true) {
+					card.removeAll();
+					card.revalidate();
+					card.repaint();
+					card.add(panelIdInfo, BorderLayout.CENTER);
+
+				}
+
+			}
+		});
+
+		rbPwd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (rbPwd.isSelected() == true) {
+
+					card.removeAll();
+					card.revalidate();
+					card.repaint();
+
+					card.add(panelPwdInfo, BorderLayout.CENTER);
+				}
+			}
+		});
+	}
+
+}

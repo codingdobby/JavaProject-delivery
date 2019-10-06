@@ -1,0 +1,84 @@
+package JaBae.Login.DAO;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+
+public class LoginDAO {
+	private static Connection conn;// url, id, pass
+	private static PreparedStatement pstmt;// sql execute
+	private static ResultSet rs;// 결과물
+
+	public static void connectDB() {
+		// 1.드라이버 로딩
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			System.out.println("JDBC 드라이버가 성공적으로 로딩되었습니다.");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("JDBC 드라이버 로딩이 실패 하였습니다.");
+		}
+		// 2.URL설정
+		String url = "jdbc:oracle:thin:@localhost:1521/xe";
+		String id = "sample";
+		String pass = "sample";
+
+		// 3.DB연결접속 확인
+		try {
+			conn = DriverManager.getConnection(url, id, pass);
+			System.out.println("성공적으로 연결되었습니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("연결이 실패했습니다.");
+		}
+	}// connectDB() end
+
+	public static void closeDB() {
+		try {
+			if (pstmt != null)
+				pstmt.close();
+			if (rs != null)
+				rs.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+
+	}// CloseDB
+
+	public boolean loginCheck(String id, String pwd) {
+		boolean check = false;
+		connectDB();
+		String SQL = "Select cus_id, pwd from customer where cus_id= ? and pwd =?";
+
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, id);
+			pstmt.setString(2, pwd);
+
+			rs = pstmt.executeQuery();// select문 수행시 사용 => table결과 보여줌
+
+			// 결과출력
+			if (rs.next() == true) {// rs.next() => 커서 한칸 밑으로 옮김
+
+				check = true;
+
+			} else {
+				check = false;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} // 공식
+
+		closeDB();
+		return check;
+	}
+
+}

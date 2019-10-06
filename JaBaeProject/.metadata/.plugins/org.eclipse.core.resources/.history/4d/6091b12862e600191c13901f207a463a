@@ -1,0 +1,202 @@
+/*
+ * w.이승연
+ * */
+
+package JaBae.admin.EventAction.GisaEventAction;
+
+import static javax.swing.JOptionPane.showMessageDialog;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+
+import JaBae.admin.DAO.GisaJoinUpdateDAO;
+import JaBae.admin.Main.GisaMgt.GisaJoined;
+import JaBae.admin.Main.GisaMgt.GisaManagement;
+import JaBae.admin.VO.GisaVO;
+import oracle.net.aso.g;
+
+public class GisaJoinedEventClass implements ActionListener {
+
+	private JButton btnOverlapCheck;
+	private JTextField tfId;
+	private JTextField tfPwd;
+	private JTextField tfPwdCheck;
+	private JTextField tfName;
+	private JTextField tfTel;
+	private JComboBox cbboxLocal;
+	private String chkId = "";
+	
+	public GisaJoinedEventClass(JTextField tfId) {
+		this.tfId = tfId;
+	}
+	
+	public GisaJoinedEventClass(JButton btnOverlapCheck, JTextField tfId) {
+		this.btnOverlapCheck = btnOverlapCheck;
+		this.tfId = tfId;
+	}
+
+	public GisaJoinedEventClass(JButton btnOverlapCheck, JTextField tfId, JTextField tfPwd, JTextField tfPwdCheck,
+			JTextField tfName, JTextField tfTel, JComboBox cbboxLocal) {
+		this.btnOverlapCheck = btnOverlapCheck;
+		this.tfId = tfId;
+		this.tfPwd =tfPwd;
+		this.tfPwdCheck = tfPwdCheck;
+		this.tfName = tfName;
+		this.tfTel = tfTel;
+		this.cbboxLocal = cbboxLocal;
+	}
+
+	//중복체크 메서드
+	String OverlapCheck(String id) throws SQLException {
+		String regExp = "^[a-z0-9_-]{4,20}$";
+
+		boolean result = false;
+		if (id == null || id.equals("")) { // 텍스트필드가 빈칸일때
+			showMessageDialog(null, "아이디를 입력하세요!");
+		} else {
+			if (!tfId.getText().matches(regExp)) { //아이디 형식 체크
+				showMessageDialog(null, "아이디 형식이 잘못 되었습니다.");
+				return null;
+			}
+
+			GisaJoinUpdateDAO gisajoindao = new GisaJoinUpdateDAO();
+			result = gisajoindao.getid(id);
+
+			if (result == true) showMessageDialog(null, "중복된 아이디입니다.");
+			else showMessageDialog(null, "사용가능한 아이디입니다.");
+		}
+		
+		return id;
+	}//overlap end
+	
+	void Register(String id, String pwd, String pwdchk, String name, String tel,String local) {
+		GisaJoinUpdateDAO gisajoinDAO = new GisaJoinUpdateDAO();
+		
+		Boolean check = nullCheck(id, pwd, pwdchk, name, tel, local);
+		if(check == false) return;
+		try {
+			System.out.println(local);
+			gisajoinDAO.insertGisa(id, pwd, name, tel, local);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		showMessageDialog(null, "가입 완료");
+	}
+	
+	//수정
+	void UpdateGisa(String id, String pwd, String pwdchk, String name, String tel,String local) {
+		GisaJoinUpdateDAO gisajoinDAO = new GisaJoinUpdateDAO();
+		
+		Boolean check = nullCheck(id, pwd, pwdchk, name, tel, local);
+		if(check == false) return;
+		try {
+			System.out.println(local);
+			gisajoinDAO.updateGisa(id, pwd, name, tel, local);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		showMessageDialog(null, "가입 완료");
+	}
+	//퇴사
+	private void ResignGisa(String id) {
+		GisaJoinUpdateDAO gisajoinDAO = new GisaJoinUpdateDAO();
+		
+		try {
+			gisajoinDAO.ResignGisa(id);
+			JOptionPane.showMessageDialog(null, id + "님이 퇴사되었습니다");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String id = tfId.getText().toString().trim();
+		GisaVO gisaVO = new GisaVO();
+		
+		if(e.getActionCommand().equals("중복체크")) {
+			try {
+				System.out.println("aa");
+				chkId = OverlapCheck(id);
+				gisaVO.setGisaId(chkId);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		if(e.getActionCommand().equals("등록")) {
+			String pwd = tfPwd.getText().toString().trim();
+			String pwdchk = tfPwdCheck.getText().toString().trim();
+			String name = tfName.getText().toString().trim();
+			String tel = tfTel.getText().toString().trim();
+			String local = cbboxLocal.getSelectedItem().toString();
+			
+			Register(id, pwd, pwdchk, name, tel, local);
+		}else if(e.getActionCommand().equals("등록") && gisaVO.getGisaId().equals(id)){
+			System.out.println(gisaVO.getGisaId());
+			showMessageDialog(null, "아이디 중복을 체크해주세요");
+		}
+		
+		if(e.getActionCommand().equals("수정")){
+			String pwd = tfPwd.getText().toString().trim();
+			String pwdchk = tfPwdCheck.getText().toString().trim();
+			String name = tfName.getText().toString().trim();
+			String tel = tfTel.getText().toString().trim();
+			String local = cbboxLocal.getSelectedItem().toString();
+			
+			UpdateGisa(id, pwd, pwdchk, name, tel, local);
+		}
+		if(e.getActionCommand().equals("퇴사")){
+			ResignGisa(id);
+		}
+	}//actionPerformedEnd
+
+	Boolean nullCheck(String id, String pwd, String pwdchk, String name, String tel,String local) {
+		String regExp = "^[a-z0-9_-]{8,20}$";
+
+		//공백 체크
+		if (id.equals("")) {
+			showMessageDialog(null, "아이디가 공백 입니다.");
+			tfId.requestFocus();
+			return false;
+		}
+		if (pwd.equals("") || pwdchk.equals("")) {
+			showMessageDialog(null, "비밀번호가 공백입니다..");
+			tfPwd.requestFocus();
+			return false;
+		}
+		
+		if(!tfPwd.getText().matches(regExp)) { //비민번호 양식 체크
+			showMessageDialog(null, "비밀번호 형식이 올바르지 않습니다!");
+			tfPwd.requestFocus();
+			return false;
+		}
+		
+		if (!pwd.equals(pwdchk)) { //비밀번호와 비밀번호 체크가 일치하지 않을 경우
+			showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
+			tfPwd.requestFocus();
+			return false;
+		}
+
+		if (name.equals("")) {
+			showMessageDialog(null, "이름이 공백입니다.");
+			tfName.requestFocus();
+			return false;
+		}
+		
+		if (tfTel.getText().equals("")) {
+			showMessageDialog(null, "전화번호가 공백입니다..");
+			tfTel.requestFocus();
+			return false;
+		}
+		
+		return true;
+	}
+	
+}

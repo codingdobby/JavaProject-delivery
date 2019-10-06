@@ -1,0 +1,554 @@
+package JaBae.Customer.Main;
+
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import static javax.swing.JOptionPane.showMessageDialog;
+import java.awt.BorderLayout;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Vector;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
+import JaBae.Customer.DAO.SearchDAO;
+import JaBae.Customer.VO.SearchVO;
+
+import java.awt.FlowLayout;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.multi.MultiLabelUI;
+import java.awt.SystemColor;
+
+public class Delivery_Select extends JFrame {
+	private JTextField tf_Song;// 송장 번호 입력 창
+	private static String toss; // 로그인 시 입력한 아이디값
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Delivery_Select window = new Delivery_Select(toss);
+					window.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Delivery_Select(String toss) {
+		this.toss = toss;
+		setTitle("택배 시스템 프로젝트");
+		setBackground(Color.WHITE);
+		setBounds(100, 100, 900, 650);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		JPanel p1 = new JPanel();
+		p1.setBorder(null);
+		p1.setBackground(Color.WHITE);
+		getContentPane().add(p1, BorderLayout.NORTH);
+		p1.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JPanel panelTitle = new JPanel();
+		panelTitle.setBackground(Color.WHITE);
+		p1.add(panelTitle);
+		panelTitle.setLayout(new BorderLayout(0, 0));
+				
+				JPanel panel_point_Btn = new JPanel();
+				panel_point_Btn.setBackground(SystemColor.control);
+				panel_point_Btn.setBorder(new EmptyBorder(20, 20, 20, 20));
+				panelTitle.add(panel_point_Btn, BorderLayout.EAST);
+				panel_point_Btn.setLayout(new BorderLayout(0, 0));
+				
+				JButton btn_Point = new JButton("포인트 조회");
+				btn_Point.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Cus_Point CP = new  Cus_Point(toss);
+						CP.setVisible(true);
+					}
+				});
+				panel_point_Btn.add(btn_Point, BorderLayout.CENTER);
+				
+				JPanel panel_5 = new JPanel();
+				panel_5.setBackground(SystemColor.control);
+				panel_5.setBorder(new EmptyBorder(30, 10, 30, 0));
+				panelTitle.add(panel_5, BorderLayout.WEST);
+				panel_5.setLayout(new BorderLayout(0, 0));
+		
+				// 뒤로가기 버튼 클릭시 메뉴 고르는 화면으로 이동
+				JButton btnBack = new JButton("←");
+				panel_5.add(btnBack);
+				btnBack.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+						Cus_selectView backView = new Cus_selectView(toss);
+						backView.setVisible(true);
+					}
+				});
+		
+		JPanel panel_Label = new JPanel();
+		panel_Label.setBackground(SystemColor.control);
+		FlowLayout fl_panel_Label = (FlowLayout) panel_Label.getLayout();
+		fl_panel_Label.setVgap(20);
+		panelTitle.add(panel_Label, BorderLayout.CENTER);
+		
+				JLabel lblDelivery_select = new JLabel("송장 조회");
+				panel_Label.add(lblDelivery_select);
+				lblDelivery_select.setFont(new Font("맑은 고딕", Font.PLAIN, 30));
+
+		JPanel pSelect = new JPanel();
+		JPanel pCheckStatus = new JPanel();
+		p1.add(pSelect);
+		pSelect.setBorder(null);
+		pSelect.setBackground(SystemColor.control);
+		pSelect.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
+
+		JLabel la_song = new JLabel("송장 번호");
+		la_song.setFont(new Font("돋움", Font.PLAIN, 25));
+		pSelect.add(la_song);
+
+		tf_Song = new JTextField();
+		pSelect.add(tf_Song);
+		tf_Song.setColumns(15);
+
+		// 버튼 액션
+		JButton btnSearch = new JButton("조회");
+
+		pSelect.add(btnSearch);
+
+		JLabel lblCheckStatus = new JLabel("진행상태");
+		lblCheckStatus.setFont(new Font("굴림", Font.PLAIN, 33));
+
+		// 이미지 사이즈 변경
+		/*******************************************************************************/
+		/*********************************************************************/
+		// 배달 전 아이콘
+		ImageIcon start_before = new ImageIcon(Delivery_Select.class.getResource("/image/start_before.png"));
+		Image start_before_img = start_before.getImage(); // ImageIcon을 Image로 변환.
+
+		start_before_img = start_before_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon start_before_icon = new ImageIcon(start_before_img);
+		/*********************************************************************/
+		// 배송 준비중 아이콘
+
+		ImageIcon start_ing = new ImageIcon(Delivery_Select.class.getResource("/image/start_ing.png"));
+		Image start_ing_img = start_ing.getImage(); // ImageIcon을 Image로 변환.
+
+		start_ing_img = start_ing_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon start_ing_icon = new ImageIcon(start_ing_img);
+
+		/*********************************************************************/
+		/*********************************************************************/
+		// 기사 전달 전 아이콘
+		ImageIcon delivery_before = new ImageIcon(Delivery_Select.class.getResource("/image/delivery_before.png"));
+		Image delivery_before_img = delivery_before.getImage(); // ImageIcon을 Image로 변환.
+
+		delivery_before_img = delivery_before_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon delivery_before_icon = new ImageIcon(delivery_before_img);
+		/*********************************************************************/
+		// 기사 전달 중 아이콘
+		ImageIcon delivery_ing = new ImageIcon(Delivery_Select.class.getResource("/image/delivery_ing.png"));
+		Image delivery_ing_img = delivery_ing.getImage(); // ImageIcon을 Image로 변환.
+
+		delivery_ing_img = delivery_ing_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon delivery_ing_icon = new ImageIcon(delivery_ing_img);
+
+		/*********************************************************************/
+		/*********************************************************************/
+		// 배송 전 아이콘
+		ImageIcon shipping_before = new ImageIcon(Delivery_Select.class.getResource("/image/shipping_before.png"));
+		Image shipping_before_img = shipping_before.getImage(); // ImageIcon을 Image로 변환.
+
+		shipping_before_img = shipping_before_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon shipping_before_icon = new ImageIcon(shipping_before_img);
+		/*********************************************************************/
+		// 배송 중 아이콘
+		ImageIcon shipping_ing = new ImageIcon(Delivery_Select.class.getResource("/image/shipping_ing.png"));
+		Image shipping_ing_img = shipping_ing.getImage(); // ImageIcon을 Image로 변환.
+
+		shipping_ing_img = shipping_ing_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon shipping_ing_icon = new ImageIcon(shipping_ing_img);
+		/*********************************************************************/
+
+		/*********************************************************************/
+		// 배달완료 아이콘
+		ImageIcon complete_before = new ImageIcon(Delivery_Select.class.getResource("/image/complete_before.png"));
+		Image complete_before_img = complete_before.getImage(); // ImageIcon을 Image로 변환.
+
+		complete_before_img = complete_before_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon complete_before_icon = new ImageIcon(complete_before_img);
+		/*********************************************************************/
+		// 배달 중 아이콘
+		ImageIcon complete_ing = new ImageIcon(Delivery_Select.class.getResource("/image/complete_ing.png"));
+		Image complete_ing_img = complete_ing.getImage(); // ImageIcon을 Image로 변환.
+
+		complete_ing_img = complete_ing_img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon complete_ing_icon = new ImageIcon(complete_ing_img);
+
+		JPanel p3 = new JPanel();
+		getContentPane().add(p3, BorderLayout.SOUTH);
+		p3.setLayout(new BorderLayout(0, 0));
+
+		JPanel panelPic_CheckStatus = new JPanel();
+		getContentPane().add(panelPic_CheckStatus, BorderLayout.CENTER);
+		panelPic_CheckStatus.setBorder(new EmptyBorder(40, 0, 0, 0));
+		FlowLayout fl_panelPic_CheckStatus = (FlowLayout) panelPic_CheckStatus.getLayout();
+
+		JPanel panelStart = new JPanel();
+		panelPic_CheckStatus.add(panelStart);
+		panelStart.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JPanel PanelStart_Top = new JPanel();
+		panelStart.add(PanelStart_Top);
+
+		JLabel lblPicBefore_start = new JLabel("");
+		PanelStart_Top.add(lblPicBefore_start);
+		lblPicBefore_start.setIcon(start_before_icon); // 아이콘 사이즈 변경
+
+		JPanel panelStart_Bottom = new JPanel();
+		panelStart.add(panelStart_Bottom);
+		panelStart_Bottom.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_label_start = new JPanel();
+		panelStart_Bottom.add(panel_label_start, BorderLayout.NORTH);
+
+		JLabel lbl_start = new JLabel("상품 준비");
+		lbl_start.setFont(new Font("돋움", Font.BOLD, 20));
+		panel_label_start.add(lbl_start);
+
+		JPanel panel_start_content = new JPanel();
+		panel_start_content.setBorder(new EmptyBorder(20, 20, 20, 20));
+		panelStart_Bottom.add(panel_start_content);
+		panel_start_content.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lbl_Object = new JLabel("상품명");
+		lbl_Object.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_start_content.add(lbl_Object);
+
+		JLabel lbl_object_info = new JLabel("");
+		panel_start_content.add(lbl_object_info);
+
+		JLabel lbl_seller = new JLabel("판매자");
+		lbl_seller.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_start_content.add(lbl_seller);
+
+		JLabel lbl_seller_info = new JLabel("");
+		panel_start_content.add(lbl_seller_info);
+
+		JPanel panel = new JPanel();
+		panel.setBorder(new EmptyBorder(0, -5, 150, -5));
+		panelPic_CheckStatus.add(panel);
+		// 화살표
+		JLabel lbArrow = new JLabel("");
+		panel.add(lbArrow);
+		lbArrow.setIcon(new ImageIcon(Delivery_Select.class.getResource("/image/right-arrow.png")));
+
+		JPanel panelPassGisa = new JPanel();
+		panelPic_CheckStatus.add(panelPassGisa);
+		panelPassGisa.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JPanel panelPassGisa_Top = new JPanel();
+		panelPassGisa.add(panelPassGisa_Top);
+		// 기사전달
+		JLabel lblPic_passGisa = new JLabel("");
+		panelPassGisa_Top.add(lblPic_passGisa);
+		lblPic_passGisa.setIcon(delivery_before_icon);
+
+		JPanel panelPassGisa_Bottom = new JPanel();
+		panelPassGisa.add(panelPassGisa_Bottom);
+		panelPassGisa_Bottom.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_Status_Label = new JPanel();
+		panelPassGisa_Bottom.add(panel_Status_Label, BorderLayout.NORTH);
+
+		JLabel lbl_PassGisa = new JLabel("상품 전달");
+		lbl_PassGisa.setFont(new Font("돋움", Font.BOLD, 20));
+		panel_Status_Label.add(lbl_PassGisa);
+
+		JPanel panel_Pass_content = new JPanel();
+		panel_Pass_content.setBorder(new EmptyBorder(10, 10, 10, 0));
+		panelPassGisa_Bottom.add(panel_Pass_content, BorderLayout.CENTER);
+		panel_Pass_content.setLayout(null);
+
+		JLabel lbl_gisa_name = new JLabel("기사 이름");
+		lbl_gisa_name.setBounds(10, 10, 75, 53);
+		panel_Pass_content.add(lbl_gisa_name);
+		
+				JLabel lbl_gisa_name_info = new JLabel("");
+				lbl_gisa_name_info.setBounds(85, 10, 75, 53);
+				panel_Pass_content.add(lbl_gisa_name_info);
+		
+				JLabel lbl_gisa_tel = new JLabel("전화번호");
+				lbl_gisa_tel.setBounds(47, 49, 75, 53);
+				panel_Pass_content.add(lbl_gisa_tel);
+		
+				JLabel lbl_gisa_tel_info = new JLabel("");
+				lbl_gisa_tel_info.setBounds(24, 89, 150, 53);
+				panel_Pass_content.add(lbl_gisa_tel_info);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new EmptyBorder(0, -5, 150, -5));
+		panelPic_CheckStatus.add(panel_1);
+		// 화살
+		JLabel lbArrow1 = new JLabel("");
+		panel_1.add(lbArrow1);
+		lbArrow1.setIcon(new ImageIcon(Delivery_Select.class.getResource("/image/right-arrow.png")));
+
+		JPanel panelDelivery = new JPanel();
+		panelPic_CheckStatus.add(panelDelivery);
+		panelDelivery.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JPanel panelDelivery_Top = new JPanel();
+		panelDelivery.add(panelDelivery_Top);
+
+		// 배송중
+		JLabel lblPic_Delivery = new JLabel("");
+		panelDelivery_Top.add(lblPic_Delivery);
+		lblPic_Delivery.setIcon(shipping_before_icon);
+
+		JPanel panelDelivery_Bottom = new JPanel();
+		panelDelivery.add(panelDelivery_Bottom);
+		panelDelivery_Bottom.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_delivery_label = new JPanel();
+		panelDelivery_Bottom.add(panel_delivery_label, BorderLayout.NORTH);
+
+		JLabel lbl_Delivery = new JLabel("배송중");
+		lbl_Delivery.setFont(new Font("돋움", Font.BOLD, 20));
+		panel_delivery_label.add(lbl_Delivery);
+
+		JPanel panel_delivery_info = new JPanel();
+		panel_delivery_info.setBorder(new EmptyBorder(20, 20, 20, 20));
+		panelDelivery_Bottom.add(panel_delivery_info, BorderLayout.CENTER);
+		panel_delivery_info.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lbl_loc = new JLabel("지역");
+		panel_delivery_info.add(lbl_loc);
+
+		JLabel lbl_loc_info = new JLabel("");
+		panel_delivery_info.add(lbl_loc_info);
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new EmptyBorder(0, -5, 150, -5));
+		panelPic_CheckStatus.add(panel_2);
+		JLabel lbArrow2 = new JLabel("");
+		panel_2.add(lbArrow2);
+		lbArrow2.setIcon(new ImageIcon(Delivery_Select.class.getResource("/image/right-arrow.png")));
+
+		JPanel panelEnd = new JPanel();
+		panelPic_CheckStatus.add(panelEnd);
+		panelEnd.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JPanel panelEnd_Top = new JPanel();
+		panelEnd.add(panelEnd_Top);
+
+		// 배송 완료
+		JLabel lblPic_End = new JLabel("");
+		panelEnd_Top.add(lblPic_End);
+		lblPic_End.setIcon(complete_before_icon);
+
+		JPanel panelEnd_Bottom = new JPanel();
+		panelEnd.add(panelEnd_Bottom);
+		panelEnd_Bottom.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_3 = new JPanel();
+		panelEnd_Bottom.add(panel_3, BorderLayout.NORTH);
+
+		JLabel lbl_End = new JLabel("배송 완료");
+		lbl_End.setFont(new Font("돋움", Font.BOLD, 20));
+		panel_3.add(lbl_End);
+
+		JPanel panelEndInfo = new JPanel();
+		panelEndInfo.setBorder(new EmptyBorder(20, 20, 20, 20));
+		panelEnd_Bottom.add(panelEndInfo, BorderLayout.CENTER);
+		panelEndInfo.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lbl_end_date = new JLabel("도착일");
+		panelEndInfo.add(lbl_end_date);
+
+		JLabel lbl_end_date_info = new JLabel("");
+		panelEndInfo.add(lbl_end_date_info);
+
+		/***************************************************************************/
+		// 내용물 숨기기
+		panel_start_content.setVisible(false);
+		panel_Pass_content.setVisible(false);
+		panel_delivery_info.setVisible(false);
+		panelEndInfo.setVisible(false);
+
+		/*************************************************************************/
+		// 조회 버튼 이벤트
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				SearchDAO dao = new SearchDAO();
+				if(tf_Song.getText().trim().equals("")) {
+					showMessageDialog(null, "송장 번호를 입력해주세요");
+					return;
+					}
+				int song_jang = Integer.parseInt(tf_Song.getText());
+				
+				
+					
+				
+				SearchVO vo = dao.getSong(song_jang);
+				if(vo==null) {
+					showMessageDialog(null, "결과 없음");
+					return;
+					
+				}
+				
+				// 정보를 각 라벨에 저장하기
+
+				
+				lbl_object_info.setText(vo.getObject_name());
+
+				// 도착지
+
+				if (vo.getLoc() != null) {
+					lbl_loc_info.setText(vo.getLoc());
+
+				} else {
+					lbl_loc_info.setText("");
+
+				}
+
+				// 기사이름
+
+				lbl_gisa_name_info.setText(vo.getGName());
+
+				// 기사 전화번호 정보
+
+				 lbl_gisa_tel_info.setText(vo.getGtel());
+
+				// 판매자 이름
+				lbl_seller_info.setText(vo.getSname());
+
+				// 도착일
+				if (vo.getEnd_date() != null) {
+					String end_date = vo.getEnd_date();
+					String date = end_date.substring(0, 10);
+					String time = end_date.substring(10, 19);
+
+					lbl_end_date_info.setText("<html>" + date + "<br/>" + time + "</html>");
+				} else {
+					lbl_end_date_info.setText("");
+
+				}
+				/*************************************************************************************/
+				// 배송 준비중 상태 표시 = > 기사가 배치 안될경우
+				if (vo.getGName() == null) {
+					// 아이콘 색상 바뀌게 설정
+
+					lblPicBefore_start.setIcon(start_ing_icon);
+					lblPic_passGisa.setIcon(delivery_before_icon);
+					lblPic_Delivery.setIcon(shipping_before_icon);
+					lblPic_End.setIcon(complete_before_icon);
+
+					// 글꼴설정
+					lbl_start.setForeground(Color.BLUE);
+					lbl_Delivery.setForeground(Color.black);
+					lbl_PassGisa.setForeground(Color.black);
+					lbl_End.setForeground(Color.black);
+
+					// 패널설정
+					panel_start_content.setVisible(true);
+					panel_Pass_content.setVisible(false);
+					panel_delivery_info.setVisible(false);
+					panelEndInfo.setVisible(false);
+				} // if end
+
+				// 기사에게 전달
+
+				else if (vo.getGName() != null && vo.getStart_date() == null) {
+
+					// 아이콘 설정
+					lblPicBefore_start.setIcon(start_before_icon);
+					lblPic_passGisa.setIcon(delivery_ing_icon);
+					lblPic_Delivery.setIcon(shipping_before_icon);
+					lblPic_End.setIcon(complete_before_icon);
+
+					// 라벨 설정
+					// 글꼴설정
+					lbl_start.setForeground(Color.black);
+					lbl_PassGisa.setForeground(Color.blue);
+					lbl_Delivery.setForeground(Color.black);
+					lbl_End.setForeground(Color.BLACK);
+					// 패널 설정
+					panel_start_content.setVisible(true);
+					panel_Pass_content.setVisible(true);
+					panel_delivery_info.setVisible(false);
+					panelEndInfo.setVisible(false);
+
+				}
+
+				// 도착 시간이 없어서 배송 중일 경우
+				else if (vo.getGName() != null && vo.getStart_date() != null && vo.getEnd_date() == null) {
+					// 아이콘 설정
+					lblPicBefore_start.setIcon(start_before_icon);
+					lblPic_passGisa.setIcon(delivery_before_icon);
+					lblPic_Delivery.setIcon(shipping_ing_icon);
+					lblPic_End.setIcon(complete_before_icon);
+
+					// 라벨 설정
+					// 글꼴설정
+					lbl_start.setForeground(Color.black);
+					lbl_PassGisa.setForeground(Color.black);
+					lbl_Delivery.setForeground(Color.BLUE);
+					lbl_End.setForeground(Color.BLACK);
+					// 패널 설정
+					panel_start_content.setVisible(true);
+					panel_Pass_content.setVisible(true);
+					panel_delivery_info.setVisible(true);
+					panelEndInfo.setVisible(false);
+				}
+
+				// 도착 시간이 존재해 배송 완료일 경우
+				else if (vo.getGName() != null && vo.getStart_date() != null && vo.getEnd_date() != null) {
+					// 아이콘 설정
+					lblPicBefore_start.setIcon(start_before_icon);
+					lblPic_passGisa.setIcon(delivery_before_icon);
+					lblPic_Delivery.setIcon(shipping_before_icon);
+					lblPic_End.setIcon(complete_ing_icon);
+
+					// 라벨 설정
+					lbl_start.setForeground(Color.black);
+					lbl_PassGisa.setForeground(Color.black);
+					lbl_Delivery.setForeground(Color.black);
+					lbl_End.setForeground(Color.BLUE);
+
+					// 패널 설정
+					panel_start_content.setVisible(true);
+					panel_Pass_content.setVisible(true);
+					panel_delivery_info.setVisible(true);
+					panelEndInfo.setVisible(true);
+				}
+
+			}
+
+		});
+
+		setLocationRelativeTo(null);
+	}
+
+}

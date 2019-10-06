@@ -1,0 +1,325 @@
+package JaBae.Login.Main.etc;
+
+import static javax.swing.JOptionPane.showMessageDialog;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import org.omg.PortableServer.ID_ASSIGNMENT_POLICY_ID;
+
+import JaBae.TextHint;
+import JaBae.Login.DAO.SignUpDAO;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import javax.swing.JTextField;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+import javax.swing.JSplitPane;
+
+import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+import java.awt.Color;
+
+public class Cus_JoinView extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField tfId;
+	private JTextField tfName;
+	private JTextField tfAddr1;
+	private JTextField tfTel;
+	private JTextField tfBirth;
+	private JTextField tfAddr2;
+	private JPasswordField tfPwd;
+	private JPasswordField tfPwdChk;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Cus_JoinView frame = new Cus_JoinView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Cus_JoinView() {
+		setTitle("택배 시스템 프로그램(회원)");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 450, 598);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.WHITE);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+
+		JPanel la_panel = new JPanel();
+		la_panel.setBackground(Color.WHITE);
+		FlowLayout flowLayout = (FlowLayout) la_panel.getLayout();
+		flowLayout.setVgap(20);
+		contentPane.add(la_panel, BorderLayout.NORTH);
+
+		JLabel la_title = new JLabel("회원가입");
+		la_title.setFont(new Font("돋움", Font.PLAIN, 30));
+		la_panel.add(la_title);
+
+		JPanel btnPanel = new JPanel();
+		btnPanel.setBackground(Color.WHITE);
+		FlowLayout flowLayout_1 = (FlowLayout) btnPanel.getLayout();
+		flowLayout_1.setVgap(20);
+		contentPane.add(btnPanel, BorderLayout.SOUTH);
+
+		// 회원 가입 이벤트
+		JButton btnReg = new JButton("등록");
+
+		btnPanel.add(btnReg);
+
+		JButton btnUpdate = new JButton("정보 수정");
+		btnPanel.add(btnUpdate);
+
+		JButton btnDelete = new JButton("탈퇴");
+		btnPanel.add(btnDelete);
+
+		// 취소 이벤트
+		JButton btnReset = new JButton("취소");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				tfName.setText("");
+				tfPwd.setText("");
+				tfPwdChk.setText("");
+				tfId.setText("");
+				tfAddr1.setText("");
+				tfAddr2.setText("");
+				tfTel.setText("");
+				tfBirth.setText("");
+
+			}
+		});
+		btnPanel.add(btnReset);
+
+		// 버튼 보이기 설정
+		btnDelete.setVisible(false);
+		btnUpdate.setVisible(false);
+
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.CENTER);
+		panel.setLayout(new BorderLayout(0, 20));
+
+		JPanel Form = new JPanel();
+		Form.setBackground(Color.WHITE);
+		panel.add(Form, BorderLayout.CENTER);
+		Form.setBorder(new EmptyBorder(50, 30, 20, 30));
+		Form.setLayout(null);
+
+		JLabel lb_Id = new JLabel("아이디");
+		lb_Id.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_Id.setBounds(42, 36, 57, 15);
+		Form.add(lb_Id);
+
+		JLabel lb_pwd = new JLabel("비밀번호");
+		lb_pwd.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_pwd.setBounds(42, 89, 72, 15);
+		Form.add(lb_pwd);
+
+		JLabel lb_name = new JLabel("이름");
+		lb_name.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_name.setBounds(42, 139, 48, 15);
+		Form.add(lb_name);
+
+		JLabel lb_addr = new JLabel("주소");
+		lb_addr.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_addr.setBounds(42, 189, 57, 15);
+		Form.add(lb_addr);
+
+		JLabel lb_tel = new JLabel("전화번호");
+		lb_tel.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_tel.setBounds(42, 289, 72, 15);
+		Form.add(lb_tel);
+
+		JLabel lb_birth = new JLabel("생년월일");
+		lb_birth.setFont(new Font("돋움", Font.BOLD, 15));
+		lb_birth.setBounds(42, 339, 72, 15);
+		Form.add(lb_birth);
+
+		tfId = new JTextField();
+		TextHint hint = new TextHint(tfId, "영어 소문자와 숫자 포함 4-20자리");
+		tfId.setBounds(112, 36, 116, 21);
+		Form.add(tfId);
+		tfId.setColumns(10);
+
+		// 중복 체크
+		JButton btn_check = new JButton("중복체크");
+		btn_check.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String id = tfId.getText();
+				String regExp = "^[a-z0-9_-]{4,20}$";
+
+				boolean result = false;
+				if (id == null || id.equals("")) { // 텍스트필드가 빈칸일때
+					showMessageDialog(null, "아이디를 입력하세요!");
+				} else {
+					if (!tfId.getText().matches(regExp)) {
+
+						showMessageDialog(null, "아이디 형식이 잘못 되었습니다.");
+						return;
+					}
+
+					SignUpDAO dao = new SignUpDAO();
+
+					result = dao.getid(id);
+
+					if (result == true) { // 결과값이 이미 있을 때
+						showMessageDialog(null, "중복된 아이디입니다.");
+
+					} else { // 결과값이 없을 때
+						showMessageDialog(null, "사용가능한 아이디입니다.");
+						btn_check.setEnabled(false);
+					}
+				}
+
+			}
+		});
+		btn_check.setBounds(270, 33, 97, 23);
+		Form.add(btn_check);
+
+		btnReg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SignUpDAO dao = new SignUpDAO();
+
+				// 공백 체크
+				if (tfId.getText().equals("")) {
+					showMessageDialog(null, "아이디가 공백 입니다.");
+					tfId.requestFocus();
+					return;
+				}
+
+				if (tfPwd.getText().equals("") || tfPwdChk.getText().equals("")) {
+
+					showMessageDialog(null, "비밀번호가 공백입니다..");
+					tfPwd.requestFocus();
+					return;
+
+				}
+				String regExp = "^[a-z0-9_-]{8,20}$";
+				if (!tfPwd.getText().matches(regExp)) {
+					showMessageDialog(null, "비밀번호 형식이 올바르지 않습니다!");
+					tfPwd.requestFocus();
+					return;
+
+				}
+
+				if (!tfPwd.getText().equals(tfPwdChk.getText())) {
+					// 비밀번호와 비밀번호 확인 값이 일치하지 않을때 메세지뜸
+					showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
+					tfPwd.requestFocus();
+					return;
+				}
+
+				if (tfName.getText().equals("")) {
+
+					showMessageDialog(null, "이름이 공백입니다.");
+					tfName.requestFocus();
+					return;
+
+				}
+
+				if (tfAddr1.getText().equals("") || tfAddr2.getText().equals("")) {
+
+					showMessageDialog(null, "주소가 공백입니다..");
+					tfAddr1.requestFocus();
+					return;
+
+				}
+				if (tfTel.getText().equals("")) {
+
+					showMessageDialog(null, "전화번호가 공백입니다..");
+					tfTel.requestFocus();
+					return;
+				}
+
+				if (btn_check.isEnabled() == true) {
+					showMessageDialog(null, "아이디 중복 체크를 하세요.");
+					return;
+
+				}
+
+				String id = tfId.getText();
+				String pwd = tfPwd.getText();
+				String name = tfName.getText();
+				String addr = tfAddr1.getText() + tfAddr2.getText();
+				String birth = tfBirth.getText();
+				String tel = tfTel.getText();
+
+				dao.insertOne(id, pwd, name, addr, tel, birth);
+				showMessageDialog(null, "가입 완료");
+
+			}
+		});
+
+		tfName = new JTextField();
+		tfName.setBounds(112, 136, 116, 21);
+		Form.add(tfName);
+		tfName.setColumns(10);
+
+		tfAddr1 = new JTextField();
+		tfAddr1.setBounds(112, 186, 265, 21);
+		Form.add(tfAddr1);
+		tfAddr1.setColumns(20);
+
+		tfAddr2 = new JTextField();
+		tfAddr2.setColumns(20);
+		tfAddr2.setBounds(112, 236, 265, 21);
+
+		Form.add(tfAddr2);
+
+		tfTel = new JTextField();
+		tfTel.setBounds(112, 286, 116, 21);
+		Form.add(tfTel);
+		tfTel.setColumns(10);
+
+		tfBirth = new JTextField();
+		tfBirth.setBounds(112, 336, 116, 21);
+		Form.add(tfBirth);
+		tfBirth.setColumns(10);
+
+		tfPwd = new JPasswordField();
+
+		tfPwd.setBounds(112, 86, 116, 21);
+		Form.add(tfPwd);
+
+		tfPwdChk = new JPasswordField();
+		TextHint hint2 = new TextHint(tfAddr2, "상세 주소를 입력하세요");
+		tfPwdChk.setBounds(261, 86, 116, 21);
+		Form.add(tfPwdChk);
+
+		setLocationRelativeTo(null);
+
+	}
+}

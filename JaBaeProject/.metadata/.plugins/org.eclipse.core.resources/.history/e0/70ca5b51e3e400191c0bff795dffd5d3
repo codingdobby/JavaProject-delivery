@@ -1,0 +1,173 @@
+package JaBae.Seller;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+import JaBae.admin.VO.GisaVO;
+
+public class Seller_ConveyorDAO {
+	
+	ArrayList<GisaVO> localList = new ArrayList<GisaVO>();
+	GisaVO gisaVO = new GisaVO();
+
+	private static Connection conn; //id, pwd, ulr
+	private static Statement st; //sql execute
+	private static ResultSet rs; //결과물
+	private static PreparedStatement ps;
+	
+	private JTextField txt_Sel_Id;
+	
+//	DB 접속 메소드
+	void connectDB() throws SQLException {
+		String url = "jdbc:oracle:thin:@localhost:1521/xe"; //2.url설정
+		String id = "gin";
+		String pwd = "java208";
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");//1.드라이버 로딩
+			System.out.println("jdbc 연결 성공");
+			
+			conn = DriverManager.getConnection(url, id, pwd); //3.db연결 접속 확인
+			System.out.println("oracle연결 성공");
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("jdbc 연결 실패");
+			e.printStackTrace();
+		} catch(SQLException e) {
+			System.out.println("orcale연결 실패");
+		}
+		
+		st = conn.createStatement();
+		
+	}
+	
+//	ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ DB 연결해제 메소드 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+	void closeDB() throws SQLException {
+		if(rs != null) rs.close();
+		if(ps != null) ps.close();
+		if(st != null) st.close();
+		if(conn!= null) conn.close();
+	}
+	
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 지역 목록을 가져오는 메서드ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+	public ArrayList<GisaVO> getLocalList() throws SQLException {
+
+		connectDB();
+
+		String sql = "select loc from loc";
+		ps = conn.prepareStatement(sql);
+		rs = ps.executeQuery();
+		
+		while (rs.next()) {
+			gisaVO = new GisaVO();
+			gisaVO.setLocal(rs.getString("loc"));
+			localList.add(gisaVO);
+		}
+		closeDB();
+		return localList;
+	}
+	
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 송장 등록 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 
+	public void Insert (String orderno, String jung,String name,String ph,String addres, String selid, int locno) {
+		
+		try {
+			connectDB();
+		} catch (SQLException e) {
+			System.out.println("DB연결 실패");
+			e.printStackTrace();
+		}
+		
+		String sql = "insert into delivery_select (ORDER_NO, OBJECT_NAME, NAME, TEL, ADDR, START_DATE, END_DATE , SELLER_ID_DS_FK, GISA_ID_DS_FK, L_NO_DS_FK) "
+				                + "values (?, ?, ?, ?, ?, sysdate, null, ?, null, ?)";
+//										   ▲  ▲  ▲  ▲  ▲				 ▲		  ▲ 
+//										   1  2  3  4  5				 6		  7
+		try {//							   |  |  |  |  |				 |		  |
+		ps = conn.prepareStatement(sql);// |  |  |  |  |				 |		  |
+		ps.setString(1, orderno);// order_no  |  |  |  |				 |		  |
+		ps.setString(2, jung);// object_name--┘	 |  |  |				 |		  |
+		ps.setString(3, name);// name ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ┘	|  |				 |		  |
+		ps.setString(4, ph);//	 tel ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ┘  |				 |		  |
+		ps.setString(5, addres);// addr ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ┘ 				 |		  |
+		ps.setString(6, selid);// seller_id_ds_kf ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ-┘		  |
+		ps.setInt(7, locno);// l_no_ds_fk ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ┘
+		} catch(SQLException e1) {
+			System.out.println("SQL입력 실패");
+			System.out.println(e1); 
+		}
+		
+		try {
+			rs = ps.executeQuery();
+			JOptionPane.showMessageDialog(null, "송장등록 완료");
+			System.out.println("SQL입력 실행 성공");
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "송장등록 실패");
+			System.out.println("SQL입력 실행 실패");
+			e1.printStackTrace();
+		}
+		
+		try {
+			closeDB();
+		} catch (SQLException e) {
+			System.out.println("DB종료 실패");
+			e.printStackTrace();
+		}
+		
+	} 
+	
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 정액권 사용 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+	public void ftuse(String selid) {
+		
+		try {
+			connectDB();
+			System.out.println("DB연결 시작");
+		} catch (SQLException e) {
+			System.out.println("DB연결 실패");
+			e.printStackTrace();
+		}
+		
+//	sell_id 와 일치하는 열의 freeticketcnt를 1개 차감.
+		String sql = "update seller set freeticketcnt = (freeticketcnt - 1) where sell_id = ? and freeticketcnt > 0";
+//																							▲
+		try {//																				1
+			ps = conn.prepareStatement(sql);//												|
+			ps.setString(1, selid); // SELL_ID ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ┘
+			System.out.println("SQL입력 성공");
+		} catch (SQLException e) {
+			System.out.println("SQL입력 실패");
+		}
+		
+		
+		try {
+			rs = ps.executeQuery();
+			System.out.println("SQL실행 성공");
+		}catch(SQLException e) {
+			System.out.println("SQL실행 실패");
+		}
+		
+		try {
+			closeDB();
+			System.out.println("DB연결 종료");
+		} catch (SQLException e) {
+			System.out.println("DB종료 실패");
+			e.printStackTrace();
+		}
+	}
+	
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+	
+	public static void main(String[] args) {
+		
+	}
+}
+
